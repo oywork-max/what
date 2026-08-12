@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>올리브영 고객 설문조사</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="survey-wrapper">
+    <div class="survey-container clay-card">
+      <!-- Clay Animation Pop-up Overlay -->
+      <div id="clayOverlay" class="clay-overlay">
+        <img id="overlayIcon" class="clay-icon-pop" src="" alt="3D Icon">
+      </div>
+
+      <!-- Header (Admin trigger) -->
+      <h1 id="surveyHeader" class="hidden-admin-trigger" onclick="handleAdminClick()">고객 의견을 들려주세요!</h1>
+      
+      <!-- SPA dynamic Content -->
+      <div id="app"></div>
+    </div>
+  </div>
+  
+  <script src="storage.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

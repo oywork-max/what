@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>올리브영 앱 스토어 이동</title>
+  <script>
+    window.onload = function() {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        window.location.href = "https://apps.apple.com/kr/app/id488421833";
+      } 
+      else if (/android/i.test(userAgent)) {
+        window.location.href = "market://details?id=com.oliveyoung"; 
+        setTimeout(() => {
+          window.location.href = "https://play.google.com/store/apps/details?id=com.oliveyoung";
+        }, 1000);
+      } 
+      else {
+        window.location.href = "https://m.oliveyoung.co.kr";
+      }
+    };
+  </script>
+</head>
+<body style="display:flex; justify-content:center; align-items:center; height:100vh; font-family:sans-serif; background:#f4f4f4;">
+  <h2 style="color:#9BC651;">스토어로 이동 중입니다...</h2>
+</body>
+</html>
