@@ -157,10 +157,79 @@ function showAdminDashboard() {
     <div style="text-align: center;">
       <h2 style="color: #E74C3C;">관리자 대시보드</h2>
       <p>총 누적 설문 응답: <b>${data.length}</b> 건</p>
-      <div style="margin: 20px 0; display:flex; gap: 10px; justify-content: center;">
-        <button onclick="SurveyStorage.exportToCSV()" class="next-btn" style="background:#2ecc71;">스프레드시트(CSV) 다운로드</button>
-        <button onclick="resetSurvey()" class="next-btn" style="background:#95a5a6;">닫기</button>
+      <div style="margin: 30px 0; display:flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button onclick="showDashboardStats()" class="next-btn" style="background:#3498db; font-size:1rem; padding: 14px 20px;">📊 대시보드 보기</button>
+        <!-- Updated to Share Via Email -->
+        <button onclick="SurveyStorage.shareViaEmail()" class="next-btn" style="background:#2ecc71; font-size:1rem; padding: 14px 20px;">📧 스프레드시트 메일 전송</button>
+        <button onclick="resetSurvey()" class="next-btn" style="background:#95a5a6; font-size:1rem; padding: 14px 20px;">✖ 닫기</button>
       </div>
+    </div>
+  `;
+}
+
+function showDashboardStats() {
+  const data = SurveyStorage.getAll();
+  const app = document.getElementById('app');
+  
+  if (data.length === 0) {
+    alert('누적된 데이터가 없습니다. 설문을 진행해주세요!');
+    return;
+  }
+
+  const stats = { q1: {}, q2: {}, q3: {}, q4: {}, q5: {} };
+  
+  data.forEach(row => {
+    const a = row.answers;
+    if(a.q1) stats.q1[a.q1] = (stats.q1[a.q1] || 0) + 1;
+    if(a.q2) stats.q2[a.q2] = (stats.q2[a.q2] || 0) + 1;
+    if(a.q3) stats.q3[a.q3] = (stats.q3[a.q3] || 0) + 1;
+    if(a.q4) {
+      const q4Arr = Array.isArray(a.q4) ? a.q4 : [a.q4];
+      q4Arr.forEach(ans => { stats.q4[ans] = (stats.q4[ans] || 0) + 1; });
+    }
+    if(a.q5) stats.q5[a.q5] = (stats.q5[a.q5] || 0) + 1;
+  });
+
+  const total = data.length;
+
+  function renderStatGroup(title, statData) {
+    let html = `<div class="stat-group"><h3>${title}</h3>`;
+    const sortedKeys = Object.keys(statData).sort((a, b) => statData[b] - statData[a]); 
+    
+    if (sortedKeys.length === 0) {
+      html += `<p style="color: #999; font-size: 0.9rem;">응답 없음</p>`;
+    }
+
+    sortedKeys.forEach(key => {
+      const count = statData[key];
+      const percent = Math.round((count / total) * 100);
+      html += `
+        <div class="stat-item">
+          <div class="stat-label">
+            <span>${key}</span>
+            <span style="color: var(--color-primary); font-weight: bold;">${count}명 (${percent}%)</span>
+          </div>
+          <div class="stat-bar-bg">
+            <div class="stat-bar-fill" style="width: ${percent}%;"></div>
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+    return html;
+  }
+
+  app.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="color: var(--color-primary); margin: 0; font-size: 1.6rem;">📊 설문 결과 대시보드</h2>
+      <button onclick="showAdminDashboard()" style="padding: 10px 16px; border-radius: 12px; border:none; background:#95a5a6; color:#fff; cursor:pointer; font-weight: bold;">뒤로가기</button>
+    </div>
+    <div class="dashboard-container">
+      ${renderStatGroup('1. 올리브영 방문 빈도', stats.q1)}
+      ${renderStatGroup('2. 회원가입 미가입 이유', stats.q2)}
+      ${renderStatGroup('3. 회원 혜택 인지도', stats.q3)}
+      ${renderStatGroup('4. 희망 혜택 (복수선택)', stats.q4)}
+      ${renderStatGroup('5. 향후 가입 의향', stats.q5)}
     </div>
   `;
 }
