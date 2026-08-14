@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>올리브영 고객 설문조사</title>
+  <style>
+    /* Pretendard Font Import */
+    @font-face {
+        font-family: 'Pretendard';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Thin.woff2') format('woff2');
+        font-weight: 100;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'Pretendard';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraLight.woff2') format('woff2');
+        font-weight: 200;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'Pretendard';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Light.woff2') format('woff2');
+        font-weight: 300;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'Pretendard';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Regular.woff2') format('woff2');
+        font-weight: 400;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'Pretendard';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Medium.woff2') format('woff2');
+        font-weight: 500;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'Pretendard';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-SemiBold.woff2') format('woff2');
+        font-weight: 600;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'Pretendard';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Bold.woff2') format('woff2');
+        font-weight: 700;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'Pretendard';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-ExtraBold.woff2') format('woff2');
+        font-weight: 800;
+        font-display: swap;
+    }
+    @font-face {
+        font-family: 'Pretendard';
+        src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Black.woff2') format('woff2');
+        font-weight: 900;
+        font-display: swap;
+    }
+
+    :root {
+      --color-primary: #9BC651;
+      --color-primary-container: #EBF4DB;
+      --color-surface: #F8F9FA;
+      --color-surface-glass: rgba(255, 255, 255, 0.85);
+      --color-text-main: #1C1B1F;
+      --color-text-sub: #49454F;
+      
+      --clay-shadow: 
+        8px 8px 24px rgba(166, 180, 200, 0.4), 
+        -8px -8px 24px rgba(255, 255, 255, 0.9),
+        inset 2px 2px 4px rgba(255, 255, 255, 0.7),
+        inset -2px -2px 4px rgba(0, 0, 0, 0.05);
+      
+      --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+      --glass-blur: blur(16px);
+      --radius-m3: 24px;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: linear-gradient(135deg, #eef2eb 0%, #f7f9f5 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--color-text-main);
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .survey-wrapper {
+      width: 100%;
+      max-width: 600px; /* Reduced for better mobile focus */
+    }
+
+    .clay-card {
+      background: var(--color-surface-glass);
+      backdrop-filter: var(--glass-blur);
+      border: var(--glass-border);
+      border-radius: var(--radius-m3);
+      box-shadow: var(--clay-shadow);
+      padding: 24px 20px; /* Tighter padding for mobile */
+      min-height: auto;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hidden-admin-trigger {
+      text-align: center;
+      color: var(--color-primary);
+      margin-top: 0;
+      margin-bottom: 16px; /* Tighter margin */
+      user-select: none;
+      cursor: default;
+      font-weight: 700;
+      font-size: 1.4rem;
+      letter-spacing: -0.5px;
+    }
+
+    .clay-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-m3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+    }
+
+    .clay-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .clay-icon-pop {
+      width: 140px;
+      height: 140px;
+      transform: scale(0.5) rotate(-15deg);
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      filter: drop-shadow(0 15px 15px rgba(0,0,0,0.15));
+    }
+
+    .clay-overlay.active .clay-icon-pop {
+      transform: scale(1) rotate(0deg);
+    }
+
+    .question-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--color-text-main);
+      text-align: center;
+      line-height: 1.4;
+      word-break: keep-all;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 12px;
+      flex-grow: 1;
+    }
+    
+    @media (max-width: 400px) {
+        .option-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .option-btn {
+      background: #ffffff;
+      border: 1px solid #eef2f6; 
+      border-radius: 16px;
+      padding: 16px 12px; /* Tighter padding */
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--color-text-sub);
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.02); 
+      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit; 
+    }
+
+    .option-btn:active, .option-btn.selected {
+      border-color: var(--color-primary);
+      background-color: var(--color-primary-container);
+      color: var(--color-primary);
+      font-weight: 600;
+      box-shadow: 0 0 0 1px var(--color-primary), inset 0 2px 4px rgba(0,0,0,0.05); 
+      transform: scale(0.98);
+    }
+
+    .next-btn {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--color-primary);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(155, 198, 81, 0.3);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .next-btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 4px 8px rgba(155, 198, 81, 0.3);
+    }
+
+    /* Dashboard Styles */
+    .dashboard-container {
+      text-align: left;
+      max-height: 60vh;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    .dashboard-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    .dashboard-container::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    .stat-group {
+      margin-bottom: 24px;
+      background: white;
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .stat-group h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: var(--color-primary);
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 8px;
+    }
+    .stat-item {
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      color: var(--color-text-sub);
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    .stat-bar-bg {
+      background: #f1f5f9;
+      border-radius: 6px;
+      height: 8px;
+      width: 100%;
+      overflow: hidden;
+    }
+    .stat-bar-fill {
+      background: var(--color-primary);
+      height: 100%;
+      border-radius: 6px;
+      width: 0%;
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
+<body>
+  <div class="survey-wrapper">
+    <div class="survey-container clay-card">
+      <div id="clayOverlay" class="clay-overlay">
+        <img id="overlayIcon" class="clay-icon-pop" src="" alt="3D Icon">
+      </div>
+      <h1 id="surveyHeader" class="hidden-admin-trigger" onclick="handleAdminClick()">고객 의견을 들려주세요!</h1>
+      <div id="app"></div>
+    </div>
+  </div>
+  
+  <script>
+    const SurveyStorage = {
+      SAVE_KEY: 'oliveyoung_survey_responses',
+
+      saveResponse(data) {
+        const history = JSON.parse(localStorage.getItem(this.SAVE_KEY) || '[]');
+        const newRecord = {
+          id: Date.now(),
+          timestamp: new Date().toLocaleString('ko-KR'),
+          answers: data
+        };
+        history.push(newRecord);
+        localStorage.setItem(this.SAVE_KEY, JSON.stringify(history));
+      },
+
+      getAll() {
+        return JSON.parse(localStorage.getItem(this.SAVE_KEY) || '[]');
+      },
+
+      generateCSVContent() {
+        const data = this.getAll();
+        let csvContent = "\uFEFFID,일시,Q1_방문빈도,Q2_미가입이유,Q3_혜택인지,Q4_희망혜택,Q5_가입의향\n";
+        data.forEach(row => {
+          const a = row.answers;
+          const q4Val = Array.isArray(a.q4) ? a.q4.join(';') : (a.q4 || '');
+          csvContent += `${row.id},"${row.timestamp}","${a.q1 || ''}","${a.q2 || ''}","${a.q3 || ''}","${q4Val}","${a.q5 || ''}"\n`;
+        });
+        return csvContent;
+      },
+
+      async shareViaEmail() {
+        const data = this.getAll();
+        if (data.length === 0) {
+          alert('공유할 데이터가 없습니다.');
+          return;
+        }
+
+        const csvContent = this.generateCSVContent();
+        const fileName = `survey_result_${Date.now()}.csv`;
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const file = new File([blob], fileName, { type: 'text/csv' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: '올리브영 설문 결과 데이터',
+              text: '태블릿에서 수집된 설문조사 결과 CSV 파일입니다.'
+            });
+          } catch (error) {
+            console.log('사용자가 공유를 취소했거나 오류가 발생했습니다.', error);
+          }
+        } else {
+          alert('현재 기기에서 파일 이메일 공유 기능을 지원하지 않아 기기에 파일로 바로 다운로드합니다.');
+          this.fallbackDownload(blob, fileName);
+        }
+      },
+
+      fallbackDownload(blob, fileName) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+    };
+
+    const surveySteps = [
+      {
+        id: 'q1',
+        title: '1. 올리브영에 얼마나 자주 방문하시나요?',
+        icon: 'https://cdn-icons-png.flaticon.com/512/3081/3081559.png',
+        options: ['주 1회 미만', '주 1~2회', '주 3~4회', '주 5회 이상']
+      },
+      {
+        id: 'q2',
+        title: '2. 회원가입을 하지 않는 가장 큰 이유는 무엇인가요?',
+        icon: 'https://cdn-icons-png.flaticon.com/512/2889/2889676.png',
+        options: ['가입 절차가 번거로워서', '개인정보 제공이 싫어서', '혜택을 느끼지 못해서', '자주 방문하지 않아서', '가족 계정 이용 중이라서']
+      },
+      {
+        id: 'q3',
+        title: '3. 올리브영 회원 혜택에 대해 얼마나 알고 계신가요?',
+        icon: 'https://cdn-icons-png.flaticon.com/512/4213/4213958.png',
+        options: ['잘 알고 있었다', '조금 알고 있었다', '이름만 들어봤다', '전혀 모른다']
+      },
+      {
+        id: 'q4',
+        title: '4. 어떤 혜택이 있다면 회원가입을 하실 의향이 있으신가요? (복수선택)',
+        icon: 'https://cdn-icons-png.flaticon.com/512/3209/3209955.png',
+        isMultiple: true,
+        options: ['즉시 할인', '적립금/포인트', '생일 쿠폰', '샘플 증정', '회원 전용 행사', '가입할 생각이 없다']
+      },
+      {
+        id: 'q5',
+        title: '5. 앞으로 회원가입을 하실 의향이 있으신가요?',
+        icon: 'https://cdn-icons-png.flaticon.com/512/2107/2107845.png',
+        options: ['있다', '고민해 보겠다', '없다']
+      }
+    ];
+
+    let currentStep = 0;
+    let answers = {};
+    let multiSelections = [];
+
+    function renderStep() {
+      const app = document.getElementById('app');
+      const data = surveySteps[currentStep];
+
+      if (!data) {
+        renderComplete();
+        return;
+      }
+
+      multiSelections = [];
+
+      let html = `<div class="question-title">${data.title}</div>`;
+      html += `<div class="option-grid">`;
+      
+      data.options.forEach(opt => {
+        html += `<button class="option-btn" id="btn-${opt}" onclick="handleSelect('${data.id}', '${opt}', ${data.isMultiple || false})">${opt}</button>`;
+      });
+      html += `</div>`;
+
+      if (data.isMultiple) {
+        html += `<button class="next-btn" onclick="submitMultiple('${data.id}')">다음으로</button>`;
+      }
+
+      app.innerHTML = html;
+    }
+
+    function handleSelect(questionId, value, isMultiple) {
+      if (isMultiple) {
+        const btn = document.getElementById(`btn-${value}`);
+        const idx = multiSelections.indexOf(value);
+        if (idx > -1) {
+          multiSelections.splice(idx, 1);
+          btn.classList.remove('selected');
+        } else {
+          multiSelections.push(value);
+          btn.classList.add('selected');
+        }
+      } else {
+        answers[questionId] = value;
+        goNext();
+      }
+    }
+
+    function submitMultiple(questionId) {
+      if (multiSelections.length === 0) {
+        alert('최소 1개 이상의 항목을 선택해주세요.');
+        return;
+      }
+      answers[questionId] = multiSelections;
+      goNext();
+    }
+
+    function goNext() {
+      if (currentStep < surveySteps.length - 1) {
+        showTransition(surveySteps[currentStep + 1].icon, () => {
+          currentStep++;
+          renderStep();
+        });
+      } else {
+        showTransition('https://cdn-icons-png.flaticon.com/512/742/742751.png', () => {
+          currentStep++;
+          renderStep();
+        });
+      }
+    }
+
+    function showTransition(iconUrl, callback) {
+      const overlay = document.getElementById('clayOverlay');
+      const icon = document.getElementById('overlayIcon');
+      icon.src = iconUrl;
+      overlay.classList.add('active');
+      setTimeout(() => {
+        overlay.classList.remove('active');
+        callback();
+      }, 700); 
+    }
+
+    function renderComplete() {
+      SurveyStorage.saveResponse(answers);
+      const app = document.getElementById('app');
+      app.innerHTML = `
+        <div style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0;">
+          <h2 style="font-size:1.8rem; color:var(--color-primary); margin-bottom: 8px;">설문 완료! 🎉</h2>
+          <p style="color: var(--color-text-sub); font-size:1rem; margin-top:0;">QR 코드를 스캔하여 혜택을 받아보세요.</p>
+          <div style="margin: 20px 0; background: white; padding: 12px; border-radius: 20px; box-shadow: var(--clay-shadow);">
+            <img src="image_26e4be.png" alt="QR" style="border-radius:12px; display:block; width: 160px; height: 160px;">
+          </div>
+          <button onclick="resetSurvey()" class="next-btn" style="width: 100%; max-width: 240px; margin-top: 10px;">처음으로 돌아가기</button>
+        </div>
+      `;
+    }
+
+    function resetSurvey() {
+      currentStep = 0;
+      answers = {};
+      renderStep();
+    }
+
+    let clickCount = 0;
+    let clickTimer = null;
+    function handleAdminClick() {
+      clickCount++;
+      if (clickCount >= 5) {
+        clickCount = 0;
+        showAdminDashboard();
+      }
+      clearTimeout(clickTimer);
+      clickTimer = setTimeout(() => { clickCount = 0; }, 2000);
+    }
+
+    function showAdminDashboard() {
+      const data = SurveyStorage.getAll();
+      const app = document.getElementById('app');
+      
+      app.innerHTML = `
+        <div style="text-align: center; padding: 10px 0;">
+          <h2 style="color: #E74C3C; margin-bottom: 8px; font-size: 1.5rem;">관리자 메뉴</h2>
+          <p style="font-weight: 500; margin-top:0; margin-bottom: 24px;">누적 설문 응답: <b style="color: var(--color-primary); font-size: 1.2rem;">${data.length}</b> 건</p>
+          <div style="display:flex; flex-direction: column; gap: 12px;">
+            <button onclick="showDashboardStats()" class="next-btn" style="background:#3498db; margin-top:0; font-size:1rem; padding: 14px;">📊 대시보드 보기</button>
+            <button onclick="SurveyStorage.shareViaEmail()" class="next-btn" style="background:#2ecc71; margin-top:0; font-size:1rem; padding: 14px;">📧 결과 메일 전송</button>
+            <button onclick="resetSurvey()" class="next-btn" style="background:#95a5a6; margin-top:0; font-size:1rem; padding: 14px;">✖ 닫기</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function showDashboardStats() {
+      const data = SurveyStorage.getAll();
+      const app = document.getElementById('app');
+      
+      if (data.length === 0) {
+        alert('누적된 데이터가 없습니다.');
+        return;
+      }
+
+      const stats = { q1: {}, q2: {}, q3: {}, q4: {}, q5: {} };
+      
+      data.forEach(row => {
+        const a = row.answers;
+        if(a.q1) stats.q1[a.q1] = (stats.q1[a.q1] || 0) + 1;
+        if(a.q2) stats.q2[a.q2] = (stats.q2[a.q2] || 0) + 1;
+        if(a.q3) stats.q3[a.q3] = (stats.q3[a.q3] || 0) + 1;
+        if(a.q4) {
+          const q4Arr = Array.isArray(a.q4) ? a.q4 : [a.q4];
+          q4Arr.forEach(ans => { stats.q4[ans] = (stats.q4[ans] || 0) + 1; });
+        }
+        if(a.q5) stats.q5[a.q5] = (stats.q5[a.q5] || 0) + 1;
+      });
+
+      const total = data.length;
+
+      function renderStatGroup(title, statData) {
+        let html = `<div class="stat-group"><h3>${title}</h3>`;
+        const sortedKeys = Object.keys(statData).sort((a, b) => statData[b] - statData[a]); 
+        
+        if (sortedKeys.length === 0) {
+          html += `<p style="color: #999; font-size: 0.9rem;">응답 없음</p>`;
+        }
+
+        sortedKeys.forEach(key => {
+          const count = statData[key];
+          const percent = Math.round((count / total) * 100);
+          html += `
+            <div class="stat-item">
+              <div class="stat-label">
+                <span>${key}</span>
+                <span style="color: var(--color-primary); font-weight: bold;">${count}명 (${percent}%)</span>
+              </div>
+              <div class="stat-bar-bg">
+                <div class="stat-bar-fill" style="width: ${percent}%;"></div>
+              </div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+        return html;
+      }
+
+      app.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2 style="color: var(--color-primary); margin: 0; font-size: 1.3rem;">📊 결과 대시보드</h2>
+          <button onclick="showAdminDashboard()" style="padding: 8px 12px; border-radius: 8px; border:none; background:#95a5a6; color:#fff; cursor:pointer; font-weight: 600; font-family: inherit; font-size: 0.9rem;">뒤로</button>
+        </div>
+        <div class="dashboard-container">
+          ${renderStatGroup('1. 올리브영 방문 빈도', stats.q1)}
+          ${renderStatGroup('2. 회원가입 미가입 이유', stats.q2)}
+          ${renderStatGroup('3. 회원 혜택 인지도', stats.q3)}
+          ${renderStatGroup('4. 희망 혜택', stats.q4)}
+          ${renderStatGroup('5. 향후 가입 의향', stats.q5)}
+        </div>
+      `;
+    }
+
+    renderStep();
+  </script>
+</body>
+</html>
